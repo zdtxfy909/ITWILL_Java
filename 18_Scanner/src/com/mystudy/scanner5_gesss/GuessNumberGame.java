@@ -18,90 +18,87 @@ Math.random() : 0 <= random값 < 1 범위의 실수값
 ---------------------------
 */
 public class GuessNumberGame {
-
-	Scanner scan = new Scanner(System.in);
-	final int chance = 3;
-	int cnt = 1;
-	String yes = "Y";
-	String no = "N";
-
+	private Scanner scan = new Scanner(System.in);
+	private int min = 1; //필드변수로 뽑으면 전체 영역에서 사용할 수 있다.
+	private int max = 100;
+	
 	public void startGame() {
+		System.out.println("::: 게임을 시작합니다");
+		while (true) {
+			playGame();
+			System.out.println("컴) 다시 도전하시겠습니까? (y/n)");
+			if ("n".equalsIgnoreCase(scan.nextLine())) {
+				break; //입력값이 n과 같으면 중단한다
+			} //y 안눌러도 반복처리됨
+		}
 
-		int comNumber = (int)(Math.random() * 100 + 1);
-System.out.println(comNumber);
-		while (chance >= cnt) {
-			System.out.print("숫자를 입력하세요 : ");
-			int select = scan.nextInt();
-			System.out.println("입력 숫자 : " + select);
+		System.out.println("::: 게임이 종료되었습니다"); 
+	}
+
+	private void playGame() {
+		System.out.println("---->> 게임 플레이 시작");
+		//1. 컴퓨터가 1~100까지 숫자 중 하나를 선택한다. (입력)
+		int comNo = (int) (Math.random() * 100 + 1);
+		System.out.println("컴퓨터가 1~100까지 숫자 중 하나를 생각했습니다."
+						+ "5번만에 맞춰보세요~~~");
+		System.out.println("> 컴퓨터가 생각한 숫자 : " + comNo);
+		
+		min = 1; //게임이 시작될 때마다 초기화
+		max = 100;
+		int tryCnt = 1;
+		while (tryCnt <= 5) {
+			//2. 사람이 숫자를 선택한다. (입력)
+			int selectNumber = selectNumber(tryCnt);
 			
-			compareNumber(comNumber, select);
+			if (selectNumber < min || selectNumber > max) {
+				System.out.println("컴) 범위 확인하고 다시 입력하세요~~");
+				tryCnt--; //횟수에 포함 안됨
+				continue; 
+			}
 			
-			
-			if (chance == cnt) {
-				System.out.println("실패! 내가 생각한 숫자는 " + comNumber + "입니다.");
-				System.out.println("-----");
-				System.out.print("다시 도전하시겠습니까? (" + yes + "/" + no +") : ");
-				scan.nextLine();
-				String replay = scan.nextLine();
-				if (replay.equalsIgnoreCase(yes)) {
-					startGame();
-				} else if (replay.equalsIgnoreCase(no)) {
-					System.out.println(">> 게임 종료");
-				}
+			//3. 사람선택숫자와 컴퓨터 숫자 비교 (비교 처리)
+			if (comNo == selectNumber) {
+				System.out.println("컴) 성공!!! 맞췄습니다. 내가 생각한 숫자는 "
+								+ comNo + "입니다.");
 				break;
 			}
-			cnt++;
+			if (comNo > selectNumber) {
+				System.out.println("컴) " + selectNumber + "보다 큽니다.");
+				min = selectNumber + 1;
+			}
+			if (comNo < selectNumber) {
+				System.out.println("컴) " + selectNumber + "보다 작습니다.");
+				max = selectNumber - 1;
+			}
+			tryCnt++;
+			
+			//5번 시도하고 여기까지 왔으면 실패
+			if (tryCnt == 5) {
+				System.out.println("컴) 실패!!! 내가 생각한 숫자는 " 
+							+ comNo + "입니다.");
+			}
+		
 		}
 		
-		
-//		int comNumber = (int)(Math.random() * 100 + 1);
-//		for (int i = 1; i <= chance; i++) {
-//			System.out.print("숫자를 입력하세요 : ");
-//			int select = scan.nextInt();
-//			scan.nextLine();
-//			System.out.println("입력 숫자 : " + select);
-//			
-//			//비교 처리
-//			if (comNumber < select) {
-//				System.out.println("입력한 숫자보다 작습니다.");
-//			}
-//			if (comNumber > select) {
-//				System.out.println("입력한 숫자보다 큽니다.");
-//			}
-//			if (comNumber == select) {
-//				System.out.println("성공!!! " + i + "번 만에 맞췄습니다.");
-//				break;
-//			}
-//			if (i == chance) {
-//				System.out.println("실패~~ 내가 생각한 숫자는 " + comNumber + "입니다.");
-//				System.out.println("-----");
-//				System.out.print("다시 도전하시겠습니까? (" + yes + "/" + no +") : ");
-//				String replay = scan.nextLine();
-//				if (replay.equalsIgnoreCase(yes)) {
-//					startGame();
-//				} else if (replay.equalsIgnoreCase(no)) {
-//					System.out.println(">> 게임 종료");
-//				}
-//				
-//			}
-//		}
-//		
-		
+		System.out.println("---->> 게임 플레이 종료");
 	}
 
-	private void compareNumber(int comNumber, int select) {
-		if (comNumber < select) {
-			System.out.println(select + "보다 작습니다.");
+	private int selectNumber(int tryCnt) {
+		int number = -1;
+		while (true) {
+			try {
+				System.out.print(tryCnt + "번째 숫자선택 (" + min + " ~ "
+								+ max + ") > "); 
+				//별도 메소드로 뽑아내니까 기존 코드랑 같은 문장 반복됨. 기존코드 삭제 처리
+				number = Integer.parseInt(scan.nextLine());
+				//뒤에 문제발생 할 수도 있으니까 scan.nextInt말고 이거 사용함
+				break; //정상데이터가 들어올 때까지 반복한다.
+			} catch (NumberFormatException e) {
+				System.out.println("[주의] 숫자값을 입력하세요.");
+			}
 		}
-		if (comNumber > select) {
-			System.out.println(select + "보다 큽니다.");
-		}
-		if (comNumber == select) {
-			System.out.println("성공!!! " + cnt + "번 만에 맞췄습니다.");
-		}
+		return number;
 	}
 
-	
-	
 
 }

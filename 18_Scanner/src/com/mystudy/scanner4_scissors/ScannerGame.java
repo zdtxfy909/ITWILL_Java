@@ -34,9 +34,6 @@ public class ScannerGame {
 		
 		//0. 컴퓨터가 가위(1),바위(2),보(3) 선택(Math.random())
 		int comSelect = (int)(Math.random() * 3 + 1);
-		//comSelect = 3; //테스트용
-		//System.out.println("comSelect : " + comSelect);
-		//System.out.println("strComputer : " + strComputer);
 		System.out.println("컴퓨터는 가위,바위,보 중에 하나를 선택했습니다");
 		
 		//1. 1.가위   2.바위   3.보   0.종료   선택 메뉴 출력
@@ -55,9 +52,6 @@ public class ScannerGame {
 		String strPerson = changeNumberToString(select);
 		//문자열로 바꾸는 기능
 		
-//		System.out.println("사람 선택값 : " + select);
-//		System.out.println("strPerson : " + strPerson);
-		
 		//4. 결과 비교 후 승자, 패자 결정
 		String result = getWinnerMessage(strComputer, strPerson);
 		
@@ -74,6 +68,7 @@ public class ScannerGame {
 			try {
 				System.out.println(">> 당신의 선택은(1~3)? ");
 				select = Integer.parseInt(scan.nextLine());
+				//그냥 scan.nextLine()만 하면 뒤에 문제 발생하니까 Integer.parseInt 처리
 				if (select >= 0 && select <= 3) {
 					break;
 				} else {
